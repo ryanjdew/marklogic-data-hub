@@ -84,7 +84,11 @@ public class FlowManagerService extends LoggingObject {
                 PluginModel pm = new PluginModel();
                 pm.pluginType = pluginName;
                 for (String pluginFile : pluginFiles) {
-                    pm.files.add(pluginFile);
+                    try {
+                        pm.files.put( pluginFile, new String(Files.readAllBytes(Paths.get(pluginPath.toString() + File.separator + pluginFile))));
+                    } catch (IOException e) {
+                        pm.files.put(pluginFile, null);
+                    }
                 }
                 flow.plugins.add(pm);
             }

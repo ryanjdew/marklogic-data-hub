@@ -99,11 +99,12 @@ $header-height: 48px;
 
 }
 
-.flow {
+/*.flow {
   &:hover {
     background-color: $hover-color;
   }
-}
+}*/
+
 .flow-subheader {
   font-weight: bold;
   margin: 0px;
@@ -243,5 +244,25 @@ pre.error-msg {
 
   p {
     margin: 5px 0;
+  }
+}
+
+li.flow.mdl-list__item {
+  flex-wrap: wrap;
+}
+
+li.flow.mdl-list__item div {
+  width: 100%;
+}
+
+li.flow.mdl-list__item div ul {
+  list-style: none;
+}
+
+li.flow.mdl-list__item div ul li {
+  padding: 0 3px;
+  cursor: pointer;
+  &:hover {
+    background-color: $hover-color;
   }
 }

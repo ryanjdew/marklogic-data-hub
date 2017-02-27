@@ -53,14 +53,28 @@
                 <li
                   class="flow mdl-list__item"
                   [ngClass]="{'active': isActiveFlow(flow)}"
-                  *ngFor="let flow of entity.harmonizeFlows"
-                  (click)="setFlow($event, entity, flow, 'Harmonize')">
-                  <span class="mdl-list__item-primary-content">
-                    <i class="mdi mdi-looks"></i>
-                    {{ flow.flowName }}
-                    <span class="mdl-layout-spacer"></span>
-                    <i class="fa fa-bug" *ngIf="flowHasError(entity.name, flow.flowName)"></i>
-                  </span>
+                  *ngFor="let flow of entity.harmonizeFlows">
+                  <div (click)="setFlow($event, entity, flow, 'Harmonize')">
+                    <span class="mdl-list__item-primary-content">
+                      <i class="mdi mdi-looks"></i>
+                      {{ flow.flowName }}
+                      <span class="mdl-layout-spacer"></span>
+                      <i class="fa fa-bug" *ngIf="flowHasError(entity.name, flow.flowName)"></i>
+                    </span>
+                  </div>
+                  <div>
+                    <ul>
+                      <li
+                        *ngFor="let plugin of flow.plugins"
+                        (click)="setFlowPlugin(plugin)">
+                        <span>
+                          <i class="fa fa-code" aria-hidden="true"></i>
+                          <span class="mdl-layout-spacer"></span>
+                          {{ plugin.pluginType }}
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
                 </li>
               </ul>
             </div>
