@@ -28,10 +28,12 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.plugin.Plugin;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.quickstart.auth.ConnectionAuthenticationToken;
 import com.marklogic.quickstart.model.EnvironmentConfig;
 import com.marklogic.quickstart.model.FlowModel;
+import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.model.entity_services.HubUIData;
 import com.marklogic.quickstart.util.FileUtil;
@@ -41,11 +43,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 @Service
 public class EntityManagerService extends LoggingObject {
@@ -255,6 +264,24 @@ public class EntityManagerService extends LoggingObject {
         newFlow.entityName =entityName;
         scaffolding.createFlow(entityName, newFlow.flowName, flowType, newFlow.pluginFormat, newFlow.dataFormat, newFlow.useEsModel);
         return getFlow(entityName, flowType, newFlow.flowName);
+    }
+    
+    public void saveFlowPlugin(
+    		String projectDir, 
+    		String entityName, 
+    		FlowType flowType, 
+    		String flowName, 
+    		PluginModel plugin
+    ) throws IOException {
+        Scaffolding scaffolding = new Scaffolding(projectDir, envConfig().getFinalClient());
+        Path flowDir = scaffolding.getFlowDir(entityName, flowName, flowType);
+        Path pluginDir = flowDir.resolve(plugin.pluginType);
+        for (String pluginFile: plugin.files.keySet()) {
+        	String pluginContent = plugin.files.get(pluginFile);
+        	String[] filePathParts = pluginFile.split(Pattern.quote(File.separator));
+        	String fileName = filePathParts[filePathParts.length - 1];
+        	Files.write(pluginDir.resolve(fileName), pluginContent.getBytes(StandardCharsets.UTF_8), StandardOpenOption.TRUNCATE_EXISTING);
+        }
     }
 
     private JsonNode getUiRawData() {

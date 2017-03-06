@@ -1,7 +1,12 @@
+import { CodemirrorComponent } from 'ng2-codemirror';
+import 'codemirror/mode/xquery/xquery';
+import 'codemirror/mode/javascript/javascript';
+
 import { Component, ViewChild } from '@angular/core';
 
 import { Entity } from '../entities/entity.model';
 import { Flow } from '../entities/flow.model';
+import { Plugin } from '../entities/plugin.model';
 
 import { EntitiesService } from '../entities/entities.service';
 
@@ -29,7 +34,18 @@ export class FlowsComponent {
   entities: Array<Entity>;
   entity: Entity;
   flow: Flow;
+  flowPlugin: Plugin;
   flowType: string;
+  view: string;
+  isSaving = false;
+
+  codeMirrorConfig = {
+    lineNumbers: true,
+    indentWithTabs: true,
+    lineWrapping: true,
+    readOnly: false,
+    mode: 'application/xquery'
+  };
 
   constructor(
     private entitiesService: EntitiesService,
@@ -113,15 +129,43 @@ export class FlowsComponent {
   }
 
   setFlow(ev: MouseEvent, entity: Entity, flow: Flow, flowType: string): void {
-    if (this.mlcp.isVisible()) {
+    if (this.mlcp && this.mlcp.isVisible()) {
       this.mlcp.cancel();
-    } else if (this.harmonize.isVisible()) {
+    } else if (this.harmonize && this.harmonize.isVisible()) {
       this.harmonize.cancel();
     }
+    this.view = 'flow';
     this.entity = entity;
     this.flow = flow;
     this.flowType = flowType;
     this.runFlow(ev, flow, flowType);
+  }
+
+  setFlowPlugin(entity: Entity, flow: Flow, flowType: string, flowPlugin: Plugin): void {
+    this.view = 'flowPlugin';
+    this.entity = entity;
+    this.flow = flow;
+    this.flowType = flowType;
+    this.flowPlugin = flowPlugin;
+    this.codeMirrorConfig.mode = (Object.keys(flowPlugin.files)[0].endsWith('js'))? 'text/javascript' : 'application/xquery';
+  }
+
+  syncPluginText(fileName: string, fileContents: string): void {
+    if (this.flowPlugin) {
+      this.flowPlugin.$dirty = true;
+      this.flowPlugin.files[fileName] = fileContents;
+    }
+  }
+
+  savePlugin(): void {
+    if (this.flowPlugin) {
+      this.isSaving = true;
+      this.entitiesService
+        .savePlugin(this.entity, this.flowType, this.flow, this.flowPlugin)
+        .subscribe(() => {
+          this.redeployModules();
+        });
+    }
   }
 
   isActiveFlow(flow: Flow): boolean {
@@ -202,7 +246,12 @@ export class FlowsComponent {
   }
 
   redeployModules() {
-    this.deployService.redeployUserModules().subscribe(() => {});
+    this.deployService.redeployUserModules().subscribe(() => {
+      if (this.flowPlugin) {
+        this.isSaving = false;
+        this.flowPlugin.$dirty = false;
+      }
+    });
     this.snackbar.showSnackbar({
       message: 'Redeploying Modules...',
     });

@@ -19,9 +19,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.JobStatusListener;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowType;
+import com.marklogic.hub.plugin.Plugin;
 import com.marklogic.quickstart.EnvironmentAware;
 import com.marklogic.quickstart.model.FlowModel;
 import com.marklogic.quickstart.model.JobStatusMessage;
+import com.marklogic.quickstart.model.PluginModel;
 import com.marklogic.quickstart.model.entity_services.EntityModel;
 import com.marklogic.quickstart.service.EntityManagerService;
 import com.marklogic.quickstart.service.FlowManagerService;
@@ -138,6 +140,20 @@ class EntitiesController extends EnvironmentAware {
         }
 
         return resp;
+    }
+
+    @RequestMapping(
+    		value = "/entities/{entityName}/flows/{flowType}/{flowName}/plugin/save", 
+    		method = RequestMethod.POST
+    )
+    @ResponseBody
+    public String saveFlowPlugin(
+            @PathVariable String entityName,
+            @PathVariable FlowType flowType,
+            @PathVariable String flowName,
+            @RequestBody PluginModel plugin) throws IOException {
+    	entityManagerService.saveFlowPlugin(envConfig().getProjectDir(), entityName, flowType, flowName, plugin);
+  		return "{ \"success\": true }";
     }
 
     @RequestMapping(value = "/entities/{entityName}/flows/input/{flowName}/save-input-options", method = RequestMethod.POST)

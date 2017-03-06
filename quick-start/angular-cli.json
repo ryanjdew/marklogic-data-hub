@@ -21,6 +21,8 @@
         "../../../node_modules/material-design-icons-iconfont/dist/material-design-icons.css",
         "../../../node_modules/font-awesome/css/font-awesome.css",
         "../../../node_modules/codemirror/lib/codemirror.css",
+        "../../../node_modules/codemirror/theme/railscasts.css",
+        "../../../node_modules/codemirror/theme/xq-light.css",
         "styles.scss"
       ],
       "scripts": [],

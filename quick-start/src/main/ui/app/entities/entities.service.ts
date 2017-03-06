@@ -5,6 +5,7 @@ import { Subject } from 'rxjs/Subject';
 
 import { Entity } from './entity.model';
 import { Flow } from './flow.model';
+import { Plugin } from './plugin.model';
 import { PropertyType } from './property.model';
 
 import { MdlDialogService, MdlDialogReference } from 'angular2-mdl';
@@ -133,6 +134,13 @@ export class EntitiesService {
 
   createFlow(entity: Entity, flowType: string, flow: Flow) {
     return this.post(this.url(`/entities/${entity.info.title}/flows/${flowType}`), flow);
+  }
+
+  savePlugin(entity: Entity, flowType: string, flow: Flow, plugin: Plugin) {
+    return this.post(
+        this.url(`/entities/${entity.info.title}/flows/${flowType}/${flow.flowName}/plugin/save`),
+        plugin
+      );
   }
 
   getInputFlowOptions(flow: Flow) {
