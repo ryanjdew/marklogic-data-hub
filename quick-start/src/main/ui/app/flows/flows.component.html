@@ -118,7 +118,10 @@
           <app-mlcp></app-mlcp>
           <app-harmonize-flow-options></app-harmonize-flow-options>
         </div>
-        <div *ngIf="view === 'flowPlugin' && flowPlugin">
+        <div class="flow-plugin" *ngIf="view === 'flowPlugin' && flowPlugin">
+          <div *ngFor="let plugin of flowPlugin.files | objectToArray">
+            <codemirror [ngModel]="plugin.value" (ngModelChange)="syncPluginText(plugin.__key, $event)" [config]="codeMirrorConfig"></codemirror>
+          </div>
           <div *ngIf="!isSaving" class="pull-right">
             <mdl-button
               mdl-button-type="raised" mdl-colored="primary" mdl-ripple
@@ -135,9 +138,6 @@
               tooltipPlacement="bottom">
               Saving <i class="fa fa-spinner fa-pulse"></i>
             </mdl-button>
-          </div>
-          <div *ngFor="let plugin of flowPlugin.files | objectToArray">
-            <codemirror [ngModel]="plugin.value" (ngModelChange)="syncPluginText(plugin.__key, $event)" [config]="codeMirrorConfig"></codemirror>
           </div>
         </div>
 <!--         <div class="current-flow" *ngIf="flow && !mlcp.isVisible() && !harmonize.isVisible()">
