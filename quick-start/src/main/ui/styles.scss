@@ -1,7 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 
 .flow-plugin {
-  .CodeMirror {
-    height: 550px;
+  height: 95%;
+  .plugin-codemirror {
+    height: inherit;
+    overflow: auto;
+    .CodeMirror {
+      height: 98%;
+    }
   }
 }

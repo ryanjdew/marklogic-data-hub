@@ -119,7 +119,7 @@
           <app-harmonize-flow-options></app-harmonize-flow-options>
         </div>
         <div class="flow-plugin" *ngIf="view === 'flowPlugin' && flowPlugin">
-          <div *ngFor="let plugin of flowPlugin.files | objectToArray">
+          <div class="plugin-codemirror" *ngFor="let plugin of flowPlugin.files | objectToArray">
             <codemirror [ngModel]="plugin.value" (ngModelChange)="syncPluginText(plugin.__key, $event)" [config]="codeMirrorConfig"></codemirror>
           </div>
           <div *ngIf="!isSaving" class="pull-right">
