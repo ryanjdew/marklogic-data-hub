@@ -349,7 +349,7 @@ class Flow {
         }
         //add our metadata to this
         result.context = result.context || {};
-        result.context.metadata = self.flowUtils.createMetadata(result.context.metadata ? result.context.metadata : {}, flowName, step.stepDefinitionName, this.globalContext.jobId);
+        result.context.metadata = self.flowUtils.createMetadata(Object.assign({}, result.context.metadata, combinedOptions.metadata), flowName, step.stepDefinitionName, this.globalContext.jobId);
         // normalize context values to arrays
         if (result.context.collections) {
           result.context.collections = normalizeToArray(result.context.collections);
