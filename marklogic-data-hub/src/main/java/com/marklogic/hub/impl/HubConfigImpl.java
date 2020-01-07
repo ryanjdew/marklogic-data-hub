@@ -68,7 +68,7 @@ import java.util.Properties;
     setterVisibility = JsonAutoDetect.Visibility.ANY)
 @Component
 @PropertySource({"classpath:dhf-defaults.properties"})
-public class HubConfigImpl implements HubConfig
+public class HubConfigImpl implements HubConfig, Cloneable
 {
     @Autowired
     private HubProject hubProject;
@@ -2096,4 +2096,7 @@ public class HubConfigImpl implements HubConfig
         isHostLoadBalancer = null;
     }
 
+    public Object clone() throws CloneNotSupportedException{
+        return super.clone();
+    }
 }

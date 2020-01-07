@@ -74,7 +74,12 @@ public class HubAppDeployer extends SimpleAppDeployer {
     @Override
     protected void executeCommand(Command command, CommandContext context) {
         reportStatus(command);
-        super.executeCommand(command, context);
+        try {
+            super.executeCommand(command, context);
+        } catch (Error e) {
+            this.onError(command.getClass().getName(), e);
+            throw e;
+        }
         completed++;
     }
 
@@ -97,12 +102,18 @@ public class HubAppDeployer extends SimpleAppDeployer {
         int count = getCommands().size();
         float percent = ((float) completed / (float) count) * 100;
         String name = command.getClass().getName();
-        onStatusChange((int) percent, format("[Step %d of %d]  %s", completed + 1, count, name));
+        onStatusChange((int) percent, format("Running  %s...", completed + 1, count, name));
     }
 
     private void onStatusChange(int percentComplete, String message) {
         if (this.listener != null) {
             this.listener.onStatusChange(percentComplete, message);
+        }
+    }
+
+    private void onError(String commandName, Error error) {
+        if (this.listener != null) {
+            this.listener.onError(commandName, error);
         }
     }
 }
