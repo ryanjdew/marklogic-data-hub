@@ -16,6 +16,7 @@ type SearchContextInterface = {
   zeroState: boolean,
   manageQueryModal: boolean,
   selectedTableProperties: any,
+  view: JSX.Element|null
 }
 
 const defaultSearchOptions = {
@@ -29,10 +30,13 @@ const defaultSearchOptions = {
   selectedFacets: {},
   maxRowsPerPage: 100,
   selectedQuery: 'select a query',
-  zeroState: false,
+  zeroState: true,
   manageQueryModal: false,
   selectedTableProperties: [],
+  view: null
 }
+
+
 
 interface ISearchContextInterface {
   searchOptions: SearchContextInterface;
@@ -63,6 +67,8 @@ interface ISearchContextInterface {
   setZeroState: (zeroState: boolean) => void;
   setManageQueryModal: (visibility: boolean) => void;
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
+  setView: (viewId: JSX.Element| null) => void;
+  setViewWithEntity: (viewId: JSX.Element, zeroState: boolean,  nextEntityType: string) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -94,6 +100,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setZeroState: () => { },
   setManageQueryModal: () => { },
   setSelectedTableProperties: () => { },
+  setView: () => { },
+  setViewWithEntity: () => { }
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -439,7 +447,23 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       });
     }
 
-  useEffect(() => {
+    const setView = (viewId: JSX.Element|null) => {
+        setSearchOptions({
+            ...searchOptions,
+            view: viewId
+        });
+    }
+
+    const setViewWithEntity = (viewId: JSX.Element, zeroState: boolean, nextEntityType: string) => {
+        setSearchOptions({
+            ...searchOptions,
+            view: viewId,
+            zeroState: zeroState,
+            nextEntityType: nextEntityType
+        });
+    }
+
+    useEffect(() => {
     if (user.authenticated) {
       setSearchFromUserPref(user.name);
     }
@@ -474,7 +498,9 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       setSelectedQuery,
       setZeroState,
       setManageQueryModal,
-      setSelectedTableProperties
+      setSelectedTableProperties,
+      setView,
+      setViewWithEntity
     }}>
       {children}
     </SearchContext.Provider>

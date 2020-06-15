@@ -40,11 +40,12 @@ const TilesView = (props) => {
     const [selection, setSelection] = useState<TileId|string>(INITIAL_SELECTION);
     const [currentNode, setCurrentNode] = useState<any>(INITIAL_SELECTION);
     const [options, setOptions] = useState<TileItem|null>(null);
-    const [view, setView] = useState<JSX.Element|null>(null);
 
     const {
         setZeroState,
         setManageQueryModal,
+        setView,
+        searchOptions
       } = useContext(SearchContext);
 
     const onMenuClick = () => {
@@ -65,12 +66,12 @@ const TilesView = (props) => {
         model: auth.canReadEntityModel() || auth.canWriteEntityModel(),
         curate: auth.canReadMapping() || auth.canWriteMapping() || auth.canReadMatchMerge() || auth.canWriteMatchMerge() || auth.canReadCustom(),
         run: auth.canReadFlow() || auth.canWriteFlow(),
-        explore: true, 
+        explore: true,
         // TODO - Needs to be updated if there are any changes in authorities for Explorer
         // explore: auth.canReadFlow() || auth.canWriteFlow(),
     };
     const enabled = Object.keys(enabledViews).filter(key => enabledViews[key]);
-    
+
     const onSelect = (id) => {
         setSelection(id);
         setCurrentNode(id); // TODO Handle multiple with nested objects
@@ -106,12 +107,12 @@ const TilesView = (props) => {
     return (
         <>
             <Toolbar tiles={tiles} onClick={onSelect} enabled={enabled}/>
-            { (view !== null) ?  (
+            { (searchOptions.view !== null) ?  (
                 <div className={styles.tilesViewContainer}>
                     { (selection !== '') ?  (
-                    <Tiles 
+                    <Tiles
                         id={selection}
-                        view={view}
+                        view={searchOptions.view}
                         currentNode={currentNode}
                         options={options}
                         onMenuClick={onMenuClick}
@@ -119,9 +120,10 @@ const TilesView = (props) => {
                         newStepToFlowOptions={newStepToFlowOptions}
                     />
                     ) : null }
-                </div> ) : 
-                <Overview/> 
+                </div> ) :
+                <Overview/>
             }
+
         </>
     );
 }

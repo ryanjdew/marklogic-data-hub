@@ -140,7 +140,7 @@ const Browse: React.FC<Props> = ({ location }) => {
       componentIsMounted.current = false
     }
 
-  }, []);
+  }, [])
 
   useEffect(() => {
     // if (entities.length && !user.error.type) {
