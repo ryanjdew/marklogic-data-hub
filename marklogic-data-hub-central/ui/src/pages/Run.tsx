@@ -339,9 +339,12 @@ const Run = (props) => {
                     }, pollConfig.interval)
                     .then(function(response: any) {
                         let entityName;
-                        if(response.hasOwnProperty('targetEntityType')){
-                            let splitTargetEntity = response.targetEntityType.split("/");
-                             entityName = splitTargetEntity[splitTargetEntity.length-1];
+                        if(response.hasOwnProperty("stepResponses")
+                          && response.stepResponses.hasOwnProperty(`${stepNumber}`)
+                          && response.stepResponses[`${stepNumber}`].hasOwnProperty('targetEntityType'))
+                        {
+                          let splitTargetEntity = response.stepResponses[`${stepNumber}`].targetEntityType.split("/");
+                          entityName = splitTargetEntity[splitTargetEntity.length-1];
                         }
                         setRunEnded({flowId: flowId, stepId: stepNumber});
                         if (response['jobStatus'] === Statuses.FINISHED) {

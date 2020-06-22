@@ -117,7 +117,7 @@ public class FlowControllerTest extends AbstractMvcTest {
                 .andExpect(status().isOk())
                 .andDo(result -> {
                     JsonNode response = parseJsonResponse(result);
-                    assertEquals(mappingInfo.targetEntityType, response.path("targetEntityType").asText(), "Info for the Job should specify the target Entity Type; response: " + response);
+                    assertEquals(mappingInfo.targetEntityType, response.path("stepResponses").path("1").path("targetEntityType").asText(), "Info for the step should specify the Target Entity Type; response: " + response);
                 });
 
         // Remove the step

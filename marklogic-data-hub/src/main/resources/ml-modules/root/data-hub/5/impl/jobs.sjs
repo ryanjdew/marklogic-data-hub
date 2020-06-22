@@ -325,9 +325,6 @@ module.exports.updateJob = module.amp(
     //update job doc before and after step run
     jobDoc.job.jobStatus = status;
     if (step) {
-      if (!(jobDoc.job.targetEntityType && jobDoc.job.lastAttemptedStep === step)) {
-        jobDoc.job.targetEntityType = getFlowStep(datahub, flow, step).options.targetEntityType;
-      }
       jobDoc.job.lastAttemptedStep = step;
       if(lastCompleted) {
        jobDoc.job.lastCompletedStep = lastCompleted;
