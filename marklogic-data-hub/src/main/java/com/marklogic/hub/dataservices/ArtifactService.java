@@ -2,13 +2,12 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.io.Format;
-
-
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.impl.BaseProxy;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.marker.JSONWriteHandle;
 
-import com.marklogic.client.impl.BaseProxy;
+import java.util.stream.Stream;
 
 /**
  * Provides a set of operations on the database server
@@ -76,7 +75,7 @@ public interface ArtifactService {
                 this.req_validateArtifact = this.baseProxy.request(
                     "validateArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getList = this.baseProxy.request(
-                    "getList.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getList.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getArtifact = this.baseProxy.request(
                     "getArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
             }
@@ -194,16 +193,18 @@ public interface ArtifactService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode getList(String artifactType) {
+            public com.fasterxml.jackson.databind.JsonNode getList(String artifactType, Stream<String> propertiesToReturn, Boolean groupByEntityType) {
                 return getList(
-                    this.req_getList.on(this.dbClient), artifactType
+                    this.req_getList.on(this.dbClient), artifactType, propertiesToReturn, groupByEntityType
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode getList(BaseProxy.DBFunctionRequest request, String artifactType) {
+            private com.fasterxml.jackson.databind.JsonNode getList(BaseProxy.DBFunctionRequest request, String artifactType, Stream<String> propertiesToReturn, Boolean groupByEntityType) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
-                          BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType))
+                          BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
+                          BaseProxy.atomicParam("propertiesToReturn", true, BaseProxy.StringType.fromString(propertiesToReturn)),
+                          BaseProxy.atomicParam("groupByEntityType", true, BaseProxy.BooleanType.fromBoolean(groupByEntityType))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -301,9 +302,11 @@ public interface ArtifactService {
    * Invokes the getList operation on the database server
    *
    * @param artifactType	provides input
+   * @param propertiesToReturn	List of properties to return. Default behavior returns all properties
+   * @param groupByEntityType	If true, artifacts are grouped by Entity Type; default varies by artifact. Artifact types with entity type relationships default to true.
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode getList(String artifactType);
+    com.fasterxml.jackson.databind.JsonNode getList(String artifactType, Stream<String> propertiesToReturn, Boolean groupByEntityType);
 
   /**
    * Invokes the getArtifact operation on the database server

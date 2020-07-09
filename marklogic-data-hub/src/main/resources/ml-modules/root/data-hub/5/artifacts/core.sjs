@@ -72,7 +72,7 @@ function getTypesInfo() {
 
 const entityServiceDrivenArtifactTypes = ['mapping', 'matching', 'merging', 'mastering', 'custom'];
 
-function getArtifacts(artifactType) {
+function getArtifacts(artifactType, propertiesToReturn, groupByEntityType = entityServiceDrivenArtifactTypes.includes(artifactType)) {
     const queries = [];
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
 
@@ -87,10 +87,10 @@ function getArtifacts(artifactType) {
       // Since these are user-specific artifacts, hub artifacts (flows and step definitions) are excluded
       queries.push(cts.notQuery(cts.collectionQuery(dataHub.consts.HUB_ARTIFACT_COLLECTION)));
 
-      if (entityServiceDrivenArtifactTypes.includes(artifactType)) {
-        return getArtifactsGroupByEntity(queries)
+      if (groupByEntityType) {
+        return getArtifactsGroupByEntity(queries, propertiesToReturn)
       } else {
-        return cts.search(cts.andQuery(queries)).toArray();
+        return cts.search(cts.andQuery(queries)).toArray().map((artifact) => cleanArtifact(artifact.toObject(), propertiesToReturn));
       }
     }
     return [];
@@ -108,7 +108,7 @@ function getEntityTitles() {
  * @param queries
  * @returns {*[]}
  */
-function getArtifactsGroupByEntity(queries) {
+function getArtifactsGroupByEntity(queries, propertiesToReturn) {
   // This is our map of results
   const entityNameMap = {};
 
@@ -133,7 +133,7 @@ function getArtifactsGroupByEntity(queries) {
   // Figure out where each artifact goes in the entityNameMap
   const artifactMap = {};
   artifacts.forEach(artifact => {
-    artifact = artifact.toObject();
+    artifact = cleanArtifact(artifact.toObject(), propertiesToReturn);
     const targetEntityType = artifact.targetEntityType;
     if (entityNameMap[targetEntityType]) {
       entityNameMap[targetEntityType].artifacts.push(artifact);
@@ -428,6 +428,17 @@ function convertStepReferenceToInlineStep(stepId) {
   });
 
   return newFlowStep;
+}
+
+function cleanArtifact(artifact, propertiesToReturn) {
+    if (fn.exists(propertiesToReturn)) {
+        let artifactCopy = {};
+        for (const prop of propertiesToReturn) {
+            artifactCopy[prop] = artifact[prop];
+        }
+        return artifactCopy;
+    }
+    return artifact;
 }
 
 module.exports = {

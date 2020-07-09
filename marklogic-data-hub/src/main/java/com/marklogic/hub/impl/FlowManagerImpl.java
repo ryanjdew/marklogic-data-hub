@@ -188,7 +188,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     @Override
     public List<String> getFlowNames() {
         List<String> flowNames = new ArrayList<>();
-        getArtifactService().getList("flow").elements().forEachRemaining((flow) -> {
+        getArtifactService().getList("flow", null, null).elements().forEachRemaining((flow) -> {
             if (flow.has("name")) {
                 flowNames.add(flow.get("name").asText());
             }

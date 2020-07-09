@@ -41,7 +41,7 @@ public class ArtifactManagerImpl implements ArtifactManager {
     }
 
     public ArrayNode getArtifacts(String artifactType) {
-        return (ArrayNode) getArtifactService().getList(artifactType);
+        return (ArrayNode) getArtifactService().getList(artifactType, null, null);
     }
 
     public ObjectNode updateArtifact(String artifactType, String artifactName, JsonNode artifactJson) {

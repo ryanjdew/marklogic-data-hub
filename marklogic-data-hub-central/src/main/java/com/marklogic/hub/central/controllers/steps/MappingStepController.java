@@ -27,7 +27,7 @@ public class MappingStepController extends BaseController {
     @ApiOperation(value = "Get all mapping steps", response = MappingSteps.class)
     @Secured("ROLE_readMapping")
     public ResponseEntity<JsonNode> getSteps() {
-        return ResponseEntity.ok(ArtifactService.on(getHubClient().getStagingClient()).getList(STEP_DEFINITION_TYPE));
+        return ResponseEntity.ok(ArtifactService.on(getHubClient().getStagingClient()).getList(STEP_DEFINITION_TYPE, null, null));
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.GET)

@@ -29,7 +29,7 @@ public class IngestionStepController extends BaseController {
     @ApiOperation(value = "Get all ingestion steps", response = IngestionSteps.class)
     @Secured("ROLE_readIngestion")
     public ResponseEntity<JsonNode> getSteps() {
-        return ResponseEntity.ok(ArtifactService.on(getHubClient().getStagingClient()).getList("ingestion"));
+        return ResponseEntity.ok(ArtifactService.on(getHubClient().getStagingClient()).getList("ingestion", null, null));
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.GET)

@@ -4,7 +4,20 @@
         {
             "name": "artifactType",
             "datatype": "string"
-        }
+        },
+        {
+            "name": "propertiesToReturn",
+            "desc": "List of properties to return. Default behavior returns all properties",
+            "datatype": "string",
+            "multiple": true,
+            "nullable": true
+        },
+         {
+             "name": "groupByEntityType",
+             "desc": "If true, artifacts are grouped by Entity Type; default varies by artifact. Artifact types with entity type relationships default to true.",
+             "datatype": "boolean",
+             "nullable": true
+         }
     ],
     "return": {
         "datatype": "jsonDocument",
