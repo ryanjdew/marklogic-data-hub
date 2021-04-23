@@ -216,7 +216,7 @@ class Flow {
 
     const batchItems = contentArray.map(contentObject => contentObject.uri);
 
-    if (this.isContextDB(stepExecutionContext.getSourceDatabase()) && !combinedOptions.stepUpdate) {
+    if (stepExecutionContext.sourceDatabaseIsCurrentDatabase() && !combinedOptions.stepUpdate) {
       this.runStep(stepExecutionContext, contentArray);
     } else {
       const flowInstance = this;
@@ -330,10 +330,6 @@ class Flow {
 
     // Directly add this to avoid the failedItems count from being incremented
     stepExecutionContext.batchErrors.push(Object.assign(error, {"uri":uri}));
-  }
-
-  isContextDB(databaseName) {
-    return !databaseName || fn.string(xdmp.database()) === fn.string(xdmp.database(databaseName));
   }
 }
 
