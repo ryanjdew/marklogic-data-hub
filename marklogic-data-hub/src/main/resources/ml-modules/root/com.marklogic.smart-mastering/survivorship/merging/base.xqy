@@ -1647,26 +1647,24 @@ declare function merge-impl:build-final-headers(
     let $path-regex := "^/[\w]*:?envelope/[\w]*:?headers/[\w]*:?" || $local-name
     where fn:empty($header-merge-rules-info[fn:matches(map:get(., "path"),$path-regex)])
     return
-    let $merge-rule := $default-merge-rule-info => map:get("mergeRule")
-    let $algorithm-name := $default-merge-rule-info => map:get("mergeAlgorithmName")
-    let $algorithm := $default-merge-rule-info => map:get("mergeAlgorithm")
-    let $is-javascript := util-impl:function-is-javascript($algorithm)
-    let $merge-rule := util-impl:convert-node-for-function($merge-rule, $is-hub-central-format, $is-javascript, merge-impl:propertyspec-to-json#1, merge-impl:propertyspec-to-xml(?, xs:QName("merging:merge")))
-    let $algorithm-info :=
-      object-node {
-        "name": fn:head(($algorithm-name[fn:exists($algorithm)], "standard")),
-        "optionsReference": $merge-options-ref
-      }
-      
+      let $merge-rule := $default-merge-rule-info => map:get("mergeRule")
+      let $algorithm-name := $default-merge-rule-info => map:get("mergeAlgorithmName")
+      let $algorithm := $default-merge-rule-info => map:get("mergeAlgorithm")
+      let $is-javascript := util-impl:function-is-javascript($algorithm)
+      let $merge-rule := util-impl:convert-node-for-function($merge-rule, $is-hub-central-format, $is-javascript, merge-impl:propertyspec-to-json#1, merge-impl:propertyspec-to-xml(?, xs:QName("merging:merge")))
+      let $algorithm-info :=
+        object-node {
+          "name": fn:head(($algorithm-name[fn:exists($algorithm)], "standard")),
+          "optionsReference": $merge-options-ref
+        }
+      let $properties := $docs/*:envelope/*:headers/node()[fn:node-name(.) eq $top-level-property]
       let $raw-values :=
-        for $content-object in $content-objects
-        let $properties := map:get($content-object, "value")/*:envelope/*:headers/node()[fn:node-name(.) = $top-level-property]
-        where fn:exists($properties)
-        return
-          let $doc-uri := map:get($content-object, "uri")
-          for $prop-value in $properties
-          let $prop-sources := map:get($sources-by-document-uri, $doc-uri)
-          return merge-impl:wrap-revision-info($top-level-property, $prop-value, $prop-sources, (), ())
+        for $prop-value in $properties
+        let $doc := fn:root($prop-value)
+        let $content-object := $content-objects[map:get(., "value") is $doc]
+        let $doc-uri := map:get($content-object, "uri")
+        let $prop-sources := map:get($sources-by-document-uri, $doc-uri)
+        return merge-impl:wrap-revision-info($top-level-property, $prop-value, $prop-sources, (), ())
       
       where fn:exists($raw-values)
       return
